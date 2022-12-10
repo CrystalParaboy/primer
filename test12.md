@@ -1,6 +1,7 @@
 编写函数，返回一个动态分配的 int 的vector。将此vector传递给另一个函数，这个函数读取标准输入，将读入的值保存在 vector元素中。再将vector传递给另一个函数，打印读入的值。
 记得在恰当的时刻delete vector。(使用智能指针所以不用）
 
+/code 
 shared_ptr<vector<int>> alloc_vec(){
     return make_shared<vector<int>>();
 }
