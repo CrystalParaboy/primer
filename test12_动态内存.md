@@ -86,3 +86,50 @@ delete p;
 解：
 
 智能指针 `sp` 所指向空间已经被释放，再对 `sp` 进行操作会出现错误。
+
+## 练习12.15（12.1.4，p443）
+
+>编写你自己版本的用 shared_ptr 管理 connection 的函数
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <memory>
+
+using namespace std;
+
+struct destination
+{
+    int port;
+    destination(int p):port(p){}
+}; 
+
+struct con
+{
+    int port;
+    con(int p):port(p){}
+};
+
+con connect(destination* pDes){
+    shared_ptr<con> pCon(new con(pDes->port));
+    cout<<"connection creating: "<<pCon.use_count()<<endl;
+    return *pCon;
+}
+
+void disconnect(con pCon){
+    cout<<"disconnect: "<<pCon.port<<endl;
+}
+
+void f(destination &des){
+    con pcon=connect(&des);
+    shared_ptr<con> p(&pcon,[](con* p){disconnect(*p);});
+    cout<<"connection now("<<p.use_count()<<")"<<endl;
+
+}
+
+int main(){
+    destination des(1942);
+    f(des);
+    return 0;
+}
+```
