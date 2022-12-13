@@ -133,3 +133,33 @@ int main(){
     return 0;
 }
 ```
+
+## 练习12.17
+
+> 下面的 `unique_ptr` 声明中，哪些是合法的，哪些可能导致后续的程序错误？解释每个错误的问题在哪里。
+
+```cpp
+int ix = 1024, *pi = &ix, *pi2 = new int(2048);
+typedef unique_ptr<int> IntP;
+(a) IntP p0(ix);
+(b) IntP p1(pi);
+(c) IntP p2(pi2);
+(d) IntP p3(&ix);
+(e) IntP p4(new int(2048));
+(f) IntP p5(p2.get());
+```
+
+解：
+
+* (a) 不合法。在定义一个 `unique_ptr` 时，需要将其绑定到一个`new` 返回的指针上。
+* (b) 不合法。理由同上。
+* (c) 合法。但是也可能会使得 `pi2` 成为空悬指针。
+* (d) 不合法。当 `p3` 被销毁时，它试图释放一个栈空间的对象。
+* (e) 合法。
+* (f) 不合法。`p5` 和 `p2` 指向同一个对象，当 `p5` 和 `p2` 被销毁时，会使得同一个指针被释放两次。
+
+## 练习12.18
+
+> `shared_ptr` 为什么没有 `release` 成员？
+
+`release` 成员的作用是放弃控制权并返回指针，因为在某一时刻只能有一个 `unique_ptr` 指向某个对象，`unique_ptr` 不能被赋值，所以要使用 `release` 成员将一个 `unique_ptr` 的指针的所有权传递给另一个 `unique_ptr`。而 `shared_ptr` 允许有多个 `shared_ptr` 指向同一个对象，因此不需要 `release` 成员。
